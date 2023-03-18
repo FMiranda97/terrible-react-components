@@ -1,0 +1,12 @@
+.roulette-selector-closed {
+    border: 4px solid black;
+    border-radius: 1rem;
+    padding: 0.5rem;
+}
+
+.roulette-selector-closed:hover {
+    color: white;
+    background-color: black;
+    border-radius: 1rem;
+    padding: 0.5rem;
+}
