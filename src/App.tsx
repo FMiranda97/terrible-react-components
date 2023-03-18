@@ -5,11 +5,35 @@ import RouletteSelector from "./components/RouletteSelector";
 function App() {
   const selectorRef = useRef<HTMLInputElement>(null);
   const selectionOptions = {
-    "R.A. Açores": ["Terceira", "Graciosa", "Pico", "São Jorge", "Faial", "Flores", "Corvo", "Santa Maria", "São Miguel"],
+    "R.A. Açores": [
+      "Corvo",
+      "Faial",
+      "Flores",
+      "Graciosa",
+      "Pico",
+      "Santa Maria",
+      "São Jorge",
+      "São Miguel",
+      "Terceira",
+    ],
     "R.A. Madeira": ["Madeira", "Porto Santo"],
-    "Região Norte": ["Porto", "Braga", "Bragança"],
-    "Região Centro": ["Coimbra", "Aveiro", "Viseu"],
-    "Região Sul": ["Beja"],
+    "Região Norte": [
+      "Aveiro",
+      "Braga",
+      "Bragança",
+      "Porto",
+      "Viana do Castelo",
+      "Vila Real",
+    ],
+    "Região Centro": [
+      "Castelo Branco",
+      "Coimbra",
+      "Guarda",
+      "undefined",
+      "Santarém",
+      "Viseu",
+    ],
+    "Região Sul": ["Beja", "Évora", "Faro", "Lisboa", "Portalegre", "Setúbal"],
   };
 
   return (
