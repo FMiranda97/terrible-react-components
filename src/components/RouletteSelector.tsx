@@ -4,7 +4,7 @@ import { useEffect, useRef, MouseEvent, useState } from "react";
 import "./RouletteSelector.css";
 
 type Props = {
-  selectionOptions?: string[];
+  selectionOptions?: any;
   size?: number;
   height?: number;
   backgroundColor?: string;
@@ -157,6 +157,7 @@ function drawSelected(
     selected_radius_box_proportion * size,
     middle_radius_box_proportion * size
   );
+
   drawText(ctx, text, x, y);
 }
 
@@ -185,6 +186,20 @@ function drawMiddleSection(
   }
 }
 
+function getSelectedName(selectedLevel: any, selectedIndex: number) {
+  selectedIndex = Math.max(0, selectedIndex);
+  return getLevelNames(selectedLevel)[selectedIndex];
+}
+
+function getLevelSize(selectedLevel: any) {
+  return getLevelNames(selectedLevel).length;
+}
+
+function getLevelNames(selectedLevel: any) {
+  if (Array.isArray(selectedLevel)) return selectedLevel;
+  return Object.keys(selectedLevel);
+}
+
 const RouletteSelector = React.forwardRef<HTMLInputElement, Props>(
   (
     {
@@ -192,13 +207,13 @@ const RouletteSelector = React.forwardRef<HTMLInputElement, Props>(
       size = 200,
       backgroundColor = "white",
       font = (size * 3) / 50 + "px sans-serif",
-      label = "",
     },
     ref
   ) => {
     const canvasRef = useRef(null);
     const [isOpen, setIsOpen] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(-1);
+    const [selectedLevel, setSelectedLevel] = useState(selectionOptions);
 
     useEffect(() => {
       const canvas = canvasRef.current as unknown as HTMLCanvasElement;
@@ -207,19 +222,19 @@ const RouletteSelector = React.forwardRef<HTMLInputElement, Props>(
         if (!ctx) return;
         clear(ctx, size);
         drawBackground(ctx, size);
-        drawSectors(ctx, size, selectionOptions.length);
-        drawItems(ctx, size, selectionOptions, font);
-        drawSelected(ctx, size, selectionOptions, selectedIndex);
+        drawSectors(ctx, size, getLevelSize(selectedLevel));
+        drawItems(ctx, size, getLevelNames(selectedLevel), font);
+        drawSelected(ctx, size, getLevelNames(selectedLevel), selectedIndex);
         drawMiddleSection(
           ctx,
           size,
           backgroundColor,
-          selectionOptions[selectedIndex]
+          getSelectedName(selectedLevel, selectedIndex)
         );
       }
     }, [
       size,
-      selectionOptions,
+      selectedLevel,
       backgroundColor,
       font,
       selectedIndex,
@@ -234,12 +249,24 @@ const RouletteSelector = React.forwardRef<HTMLInputElement, Props>(
       const y = Math.round(e.clientY - rect.top) - size / 2;
       // atan returns a value in [-PI; PI], add 2PI to get strictly positive values and PI/2 so that the angle starts measuring on the vertical axis
       const angle = (Math.atan2(y, x) + 2.5 * Math.PI) % (2 * Math.PI);
-      const step = (2 * Math.PI) / selectionOptions.length;
+      const step = (2 * Math.PI) / getLevelSize(selectedLevel);
       const selectedIndex = Math.max(
         0,
-        Math.min(Math.floor(angle / step), selectionOptions.length - 1)
+        Math.min(Math.floor(angle / step), getLevelSize(selectedLevel) - 1)
       );
       setSelectedIndex(selectedIndex);
+    }
+
+    function select() {
+      if (Array.isArray(selectedLevel)) {
+        setIsOpen(false);
+      } else {
+        setSelectedLevel(
+          (selectedLevel: any) =>
+            selectedLevel[getSelectedName(selectedLevel, selectedIndex)]
+        );
+        setSelectedIndex(0);
+      }
     }
 
     let selector;
@@ -251,12 +278,13 @@ const RouletteSelector = React.forwardRef<HTMLInputElement, Props>(
           width={size}
           style={{ backgroundColor: backgroundColor }}
           onMouseMove={updateSelectedItem}
+          onClick={select}
         />
       );
     } else {
       selector = (
         <div className={"roulette-selector-closed"}>
-          {selectionOptions[selectedIndex] || selectionOptions[0]}
+          {getSelectedName(selectedLevel, selectedIndex)}
         </div>
       );
     }
@@ -264,13 +292,17 @@ const RouletteSelector = React.forwardRef<HTMLInputElement, Props>(
       <div
         style={{ margin: "1rem" }}
         onClick={() => {
-          setIsOpen((isOpen) => !isOpen);
+          if (!isOpen) {
+            setIsOpen(true);
+            setSelectedLevel(selectionOptions);
+            setSelectedIndex(0);
+          }
         }}
       >
         <input
           type={"hidden"}
           ref={ref}
-          value={selectionOptions[selectedIndex] || selectionOptions[0]}
+          value={getSelectedName(selectedLevel, selectedIndex)}
         ></input>
         {selector}
       </div>

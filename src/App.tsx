@@ -4,13 +4,13 @@ import RouletteSelector from "./components/RouletteSelector";
 
 function App() {
   const selectorRef = useRef<HTMLInputElement>(null);
-  const selectionOptions = [
-    "R.A. Açores",
-    "R.A. Madeira",
-    "Região Norte",
-    "Região Centro",
-    "Região Sul",
-  ];
+  const selectionOptions = {
+    "R.A. Açores": ["Terceira", "Graciosa", "Pico", "São Jorge", "Faial", "Flores", "Corvo", "Santa Maria", "São Miguel"],
+    "R.A. Madeira": ["Madeira", "Porto Santo"],
+    "Região Norte": ["Porto", "Braga", "Bragança"],
+    "Região Centro": ["Coimbra", "Aveiro", "Viseu"],
+    "Região Sul": ["Beja"],
+  };
 
   return (
     <div className="App">
