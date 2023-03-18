@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import "./App.css";
-import RouletteSelector from "./components/RouletteSelector";
+import BadRouletteSelector from "./components/BadRouletteSelector";
 
 function App() {
   const selectorRef = useRef<HTMLInputElement>(null);
@@ -38,7 +38,7 @@ function App() {
 
   return (
     <div className="App">
-      <RouletteSelector ref={selectorRef} selectionOptions={selectionOptions} />
+      <BadRouletteSelector ref={selectorRef} selectionOptions={selectionOptions} />
       <button
         onClick={() => {
           alert(selectorRef.current?.value);
